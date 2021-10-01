@@ -9,7 +9,23 @@
 #include <iostream>
 #include "../src/lib/glad/glad.h"
 #include <GLFW/glfw3.h>
+#include "include/polygon_maker.h"
+#include <math.h>
 using namespace std;
+
+const char* vertexShaderSource = "#version 330 core\n"
+			"layout (location=0) in vec3 aPos;\n"
+			"void main()\n"
+			"{\n"
+			"	gl_position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+			"}\n\0";
+
+const char* fragmentShaderSource = "#version 330 core\n"
+			"out vec4 FragColor;\n"
+			"void main()\n"
+			"{\n"
+			"	FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
+			"}\n\0";
 
 int main() {
 
@@ -35,6 +51,15 @@ int main() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	//Swap the back buffer with the front buffer
 	glfwSwapBuffers(window);
+	GLfloat triangle_vertices[] = {
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+		0.0f, 0.5f * float(sqrt(3)) *2, 0.0f
+
+	};
+
+	polygon_maker polygon_maker1(window, triangle_vertices, vertexShaderSource, fragmentShaderSource);
+	polygon_maker1.make_polygon();
 
 	while(!glfwWindowShouldClose(window)){
 		//Take care of all GLFW events

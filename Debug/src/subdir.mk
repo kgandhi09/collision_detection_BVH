@@ -4,13 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/collision_detection.cpp 
+../src/collision_detection.cpp \
+../src/polygon_maker.cpp 
 
 OBJS += \
-./src/collision_detection.o 
+./src/collision_detection.o \
+./src/polygon_maker.o 
 
 CPP_DEPS += \
-./src/collision_detection.d 
+./src/collision_detection.d \
+./src/polygon_maker.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
