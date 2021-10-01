@@ -13,19 +13,8 @@
 #include <math.h>
 using namespace std;
 
-const char* vertexShaderSource = "#version 330 core\n"
-			"layout (location=0) in vec3 aPos;\n"
-			"void main()\n"
-			"{\n"
-			"	gl_position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-			"}\n\0";
 
-const char* fragmentShaderSource = "#version 330 core\n"
-			"out vec4 FragColor;\n"
-			"void main()\n"
-			"{\n"
-			"	FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-			"}\n\0";
+
 
 int main() {
 
@@ -67,21 +56,6 @@ int main() {
 			5, 4, 1
 	};
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	GLuint shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-
-	glLinkProgram(shaderProgram);
-
 	//sending from cpu to GPU, but in big batches called buffers (different from screen front and back buffers)
 	GLuint VAO, VBO, EBO;
 
@@ -103,14 +77,10 @@ int main() {
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-//	glDeleteShader(vertexShader);
-//	glDeleteShader(fragmentShader);
-
-
 	while(!glfwWindowShouldClose(window)){
 		glClearColor(0.27f, 0.05f, 0.34f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(shaderProgram);
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
@@ -121,7 +91,7 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-	glDeleteProgram(shaderProgram);
+
 	glfwDestroyWindow(window);
 
 	//This function destroys all remaining windows and cursors, restores any modified gamma ramps and frees any other allocated resources
