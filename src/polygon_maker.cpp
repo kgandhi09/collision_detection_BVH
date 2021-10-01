@@ -14,7 +14,7 @@ polygon_maker::polygon_maker(GLFWwindow* window, GLfloat* vertices, const char* 
 	polygon_maker::fragmentShaderSource = fragmentShaderSource;
 }
 
-void polygon_maker::make_polygon(){
+GLuint* polygon_maker::make_polygon(){
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
@@ -49,5 +49,7 @@ void polygon_maker::make_polygon(){
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+	GLuint result[] = {shaderProgram, VAO};
 
+	return result;
 }

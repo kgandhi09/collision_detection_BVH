@@ -22,7 +22,7 @@ public:
 	const char* fragmentShaderSource;
 
 	polygon_maker(GLFWwindow* window, GLfloat vertices[], const char* vertexShaderSource, const char* fragmentShaderSource);
-	void make_polygon();
+	GLuint* make_polygon();
 };
 
 

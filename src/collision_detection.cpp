@@ -59,13 +59,19 @@ int main() {
 	};
 
 	polygon_maker polygon_maker1(window, triangle_vertices, vertexShaderSource, fragmentShaderSource);
-	polygon_maker1.make_polygon();
+	GLuint* shaderProgram = polygon_maker1.make_polygon();
+
 
 	while(!glfwWindowShouldClose(window)){
+		glClearColor(0.27f, 0.05f, 0.34f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glUseProgram(shaderProgram[0]);
+		glBindVertexArray(shaderProgram[1]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glfwSwapBuffers(window);
 		//Take care of all GLFW events
 		glfwPollEvents();
 	}
-
 
 	glfwDestroyWindow(window);
 
