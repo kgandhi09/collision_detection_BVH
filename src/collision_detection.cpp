@@ -15,4 +15,21 @@ int main() {
 
 	//initialize the glfw3 library
 	glfwInit();
+
+	//creates a window object
+	//glfwCreateWindow(int width, int height, char* title, GLFWmonitor* monitor, GLFWwindow* share)
+	GLFWwindow* window = glfwCreateWindow(800,800, "Collision Detection Simulator", NULL, NULL);
+
+	//makes the OpenGL context of specified window current on the calling thread
+	glfwMakeContextCurrent(window);
+
+	while(!glfwWindowShouldClose(window)){
+		glfwPollEvents();
+	}
+
+
+	glfwDestroyWindow(window);
+
+	//This function destroys all remaining windows and cursors, restores any modified gamma ramps and frees any other allocated resources
+	glfwTerminate();
 }
