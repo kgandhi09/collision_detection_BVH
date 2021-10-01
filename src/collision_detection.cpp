@@ -7,9 +7,12 @@
 //============================================================================
 
 #include <iostream>
+#include "../src/lib/glad/glad.h"
+#include <GLFW/glfw3.h>
 using namespace std;
 
 int main() {
-	cout << "testing" << endl; // prints I love you Bansi
-	return 0;
+
+	//initialize the glfw3 library
+	glfwInit();
 }
