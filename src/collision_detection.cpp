@@ -11,10 +11,27 @@
 #include <GLFW/glfw3.h>
 #include "include/polygon_maker.h"
 #include <math.h>
+#include "include/shaderClass.h"
+#include "include/VBO.h"
+#include "include/EBO.h"
+#include "include/VAO.h"
 using namespace std;
 
+GLfloat polygon_vertices[] = {
+	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
+	0.0f, 0.5f * float(sqrt(3)) * 2/3, 0.0f
+	-0.5f/2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+	0.5f/2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
 
+};
 
+GLuint indices[] = {
+		0, 3, 5,
+		3, 2, 4,
+		5, 4, 1
+};
 
 int main() {
 
@@ -40,58 +57,37 @@ int main() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	//Swap the back buffer with the front buffer
 	glfwSwapBuffers(window);
-	GLfloat polygon_vertices[] = {
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		0.0f, 0.5f * float(sqrt(3)) * 2/3, 0.0f
-		-0.5f/2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-		0.5f/2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
-
-	};
-
-	GLuint indices[] = {
-			0, 3, 5,
-			3, 2, 4,
-			5, 4, 1
-	};
 
 	//sending from cpu to GPU, but in big batches called buffers (different from screen front and back buffers)
-	GLuint VAO, VBO, EBO;
+	Shader shaderProgram("shaders/default.vert", "shaders/default.frag");
 
-	glGenVertexArrays(1, &VAO);
+	VAO VAO1;
+	VAO1.Bind();
 
+	VBO VBO1(polygon_vertices, sizeof(polygon_vertices));
+	EBO EBO1(indices, sizeof(indices));
 
+	VAO1.LinkVBO(VBO1, 0);
 
-	glBindVertexArray(VAO);
-
-
-
-
-
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-
-	glBindVertexArray(0);
-
+	VAO1.UnBind();
+	VBO1.UnBind();
+	EBO1.UnBind();
 
 	while(!glfwWindowShouldClose(window)){
 		glClearColor(0.27f, 0.05f, 0.34f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		glBindVertexArray(VAO);
+		shaderProgram.Activate();
+		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		//Take care of all GLFW events
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-
-
-
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
+	shaderProgram.Delete();
 	glfwDestroyWindow(window);
 
 	//This function destroys all remaining windows and cursors, restores any modified gamma ramps and frees any other allocated resources

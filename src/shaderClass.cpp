@@ -8,8 +8,11 @@
 #include "include/shaderClass.h"
 
 string get_file_contents(const char* filename){
+
 	ifstream in(filename, ios::binary);
+
 	if(in){
+
 		string contents;
 		in.seekg(0, ios::end);
 		contents.resize(in.tellg());
@@ -19,6 +22,7 @@ string get_file_contents(const char* filename){
 		return(contents);
 	}
 	throw(errno);
+
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile){
