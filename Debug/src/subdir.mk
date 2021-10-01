@@ -4,16 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/VBO.cpp \
 ../src/collision_detection.cpp \
 ../src/polygon_maker.cpp \
 ../src/shaderClass.cpp 
 
 OBJS += \
+./src/VBO.o \
 ./src/collision_detection.o \
 ./src/polygon_maker.o \
 ./src/shaderClass.o 
 
 CPP_DEPS += \
+./src/VBO.d \
 ./src/collision_detection.d \
 ./src/polygon_maker.d \
 ./src/shaderClass.d 
