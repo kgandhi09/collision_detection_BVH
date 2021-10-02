@@ -61,31 +61,50 @@ int main() {
 	//sending from cpu to GPU, but in big batches called buffers (different from screen front and back buffers)
 	Shader shaderProgram("/home/gandhi/Desktop/Eclipse Workspace/collision_detection_BVH/src/shaders/default_vert.txt", "/home/gandhi/Desktop/Eclipse Workspace/collision_detection_BVH/src/shaders/default_frag.txt");
 
-	VAO VAO1;
-	VAO1.Bind();
-
-	VBO VBO1(polygon_vertices, sizeof(polygon_vertices));
+//	VAO VAO1;
+//	VAO1.Bind();
+//
+//	VBO VBO1(polygon_vertices, sizeof(polygon_vertices));
 //	EBO EBO1(indices, sizeof(indices));
-
-	VAO1.LinkVBO(VBO1, 0);
-
-	VAO1.UnBind();
-	VBO1.UnBind();
+//
+//	VAO1.LinkVBO(VBO1, 0);
+//
+//	VAO1.UnBind();
+//	VBO1.UnBind();
 //	EBO1.UnBind();
+
+	GLuint VAO, VBO;
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(polygon_vertices), polygon_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+
 
 	while(!glfwWindowShouldClose(window)){
 		glClearColor(0.27f, 0.05f, 0.34f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
-		VAO1.Bind();
+//		VAO1.Bind();
+		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwSwapBuffers(window);
 		//Take care of all GLFW events
 		glfwPollEvents();
 	}
 
-	VAO1.Delete();
-	VBO1.Delete();
+//	VAO1.Delete();
+//	VBO1.Delete();
 //	EBO1.Delete();
 	shaderProgram.Delete();
 	glfwDestroyWindow(window);
