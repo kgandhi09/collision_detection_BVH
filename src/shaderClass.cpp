@@ -7,21 +7,14 @@
 
 #include "include/shaderClass.h"
 
-string get_file_contents(const char* filename){
+string get_file_contents(const char* path){
 
-	ifstream in(filename, ios::binary);
-
-	if(in){
-
-		string contents;
-		in.seekg(0, ios::end);
-		contents.resize(in.tellg());
-		in.seekg(0, ios::beg);
-		in.read(&contents[0], contents.size());
-		in.close();
-		return(contents);
+	ifstream input_file(path);
+	if(!input_file.is_open()){
+		cout << "Could not open the file" << endl;
+		exit(EXIT_FAILURE);
 	}
-	throw(errno);
+    return string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
 
 }
 
