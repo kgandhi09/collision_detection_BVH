@@ -20,8 +20,9 @@ using namespace std;
 
 int main() {
 
-	int valRead;
-	char buffer[1024] = {0};
+
+	char buffer[4096] = {0};
+	char *echo = "Message Received";
 
 	//Create a socket
 	int client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,7 +34,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54000);
+	serv_addr.sin_port = htons(54003);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -46,10 +47,26 @@ int main() {
 		return -1;
 	}
 
-	while(true){
-		valRead = read(client_socket, buffer, 1024);
-		cout << buffer << endl;
-	}
+//	while(true){
+//		send(client_socket , echo, strlen(echo) , 0);
+//		valRead = read(client_socket, buffer, 1024);
+//		cout << buffer[0] << endl;
+//	}
 
+	while(true){
+		int bytesReceived = recv(client_socket, buffer, 4096, 0);
+		if (bytesReceived == -1)
+		{
+			cerr << "Error in recv(). Quitting" << endl;
+			break;
+		}
+        if (bytesReceived == 0)
+        {
+            cout << "Client disconnected " << endl;
+            break;
+        }
+
+        cout << string(buffer, 0, bytesReceived) << endl;
+	}
 	return 0;
 }
