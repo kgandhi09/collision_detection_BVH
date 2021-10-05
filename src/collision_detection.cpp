@@ -3,15 +3,53 @@
 // Author      : Kushal Gandhi
 // Version     :
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description : Collision Detection in C++, Ansi-style
 //============================================================================
 
 #include <iostream>
 #include <math.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <string>
 
 using namespace std;
 
 int main() {
-	cout << "test" << endl;
+
+	int valRead;
+	char buffer[1024] = {0};
+
+	//Create a socket
+	int client_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if(client_socket == -1){
+		cerr << "Can't create the client socket! Quitting!" << endl;
+		return -1;
+	}
+
+	//Bind the IP address and port to a socket
+	struct sockaddr_in serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(54000);
+
+	//Convert IPv4 and IPv6 addresses from text to binary form
+	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
+		cerr << "Invalid Address!" << endl;
+		return -1;
+	}
+
+	if(connect(client_socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
+		cerr << "Connection Refused!" << endl;
+		return -1;
+	}
+
+	while(true){
+		valRead = read(client_socket, buffer, 1024);
+		cout << buffer << endl;
+	}
+
 	return 0;
 }
