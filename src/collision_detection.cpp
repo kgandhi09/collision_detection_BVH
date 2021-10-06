@@ -20,45 +20,102 @@
 using namespace std;
 
 void print_2d_vector(vector<vector<float>> vec){
-	for(int i = 0; i < vec.size(); i++){
-		for(int j = 0; j < vec[i].size(); j++){
+	for(long unsigned int i = 0; i < vec.size(); i++){
+		for(long unsigned int j = 0; j < vec[i].size(); j++){
 			cout << vec[i][j] << " ";
 		}
-		cout << " " << endl;
+		cout << endl;
 	}
+}
+
+vector<int> conv_string_list_vector_int(string val){
+	vector<int> vec;
+
+	long unsigned int i = 0;
+	string temp_val;
+	while(i<val.length()){
+
+		if(val[i] == '['){
+			i += 1;
+			continue;
+		}
+		else if(val[i] == ',' || val[i] == ']'){
+			vec.push_back(stoi(temp_val));
+			temp_val = "";
+		}
+		else{
+			temp_val += val[i];
+		}
+		i++;
+	}
+
+	return vec;
+}
+
+vector<float> conv_string_list_vector_float(string val){
+	vector<float> vec;
+
+	long unsigned int i = 0;
+	string temp_val;
+	while(i<val.length()){
+
+		if(val[i] == '['){
+			i += 1;
+			continue;
+		}
+		else if(val[i] == ',' || val[i] == ']'){
+			vec.push_back(stof(temp_val));
+			temp_val = "";
+		}
+		else{
+			temp_val += val[i];
+		}
+		i++;
+	}
+
+	return vec;
+}
+
+vector<vector<float>> conv_2d_list_vector(string val){
+	vector<vector<float>> vec;
+	long unsigned int i = 0;
+	string temp_val;
+	vector<float> temp_vec;
+
+	while(i<val.length()){
+		if(val[i] == '['){
+			i+= 1;
+			continue;
+		}
+		else if(val[i] == ']'){
+			temp_val = '[' + temp_val + ']';
+			temp_vec = conv_string_list_vector_float(temp_val);
+			vec.push_back(temp_vec);
+			temp_val = "";
+			i += 2;
+		}
+		else{
+			temp_val += val[i];
+		}
+		i++;
+	}
+	return vec;
+
 }
 
 void convert_jsonString_to_vector(string buffer){
 	cout << buffer << endl;
-	int is_number_flag = 0;
-	int is_negative_flag = 0;
-	int is_vertex_info_flag = 0;
-	int is_location_info_flag = 0;
-
-	string start_of_array = "[[[";
-	string end_of_array = "]]]";
-	string start_of_sub_array = "[[";
-	string end_of_sub_array = "]]";
-	string vertex_info_part = "Vertex Info:";
-	string location_info_part = "Location Info:";
-
-	int str_length = buffer.length();
-	string str;
-
-	vector<vector<float>> vertex_info_cube;
-	vector<vector<float>> vertex_info_suzanne;
-
-	for(int i = 0; i < str_length; i++){
-
-		is_vertex_info_flag = ((buffer.substr (i, i+12)).compare(vertex_info_part) == 0);
-		is_location_info_flag = ((buffer.substr (i, i+14)).compare(location_info_part) == 0);
-
-		//check if the part of the array is vertex or location info
-		if(is_vertex_info_flag){
-
-		}
-
+	cout << "----------" << endl;
+	int buffer_length = buffer.length();
+	vector<int> linebreak_idx;
+	for(int i = 0; i < buffer_length; i++){
+		if(buffer[i] == '\n'){linebreak_idx.push_back(i);}
 	}
+	int obj_count = stoi(buffer.substr (0, linebreak_idx[0]));
+	vector<int> vertex_count = conv_string_list_vector_int(buffer.substr (linebreak_idx[0]+1, linebreak_idx[1]-(linebreak_idx[0]+1)));
+	int frames_count = stoi(buffer.substr (linebreak_idx[1]+1, linebreak_idx[2]-(linebreak_idx[1]+1)));
+	vector<vector<float>> vertices_info = conv_2d_list_vector(buffer.substr (linebreak_idx[2]+1, linebreak_idx[3]-(linebreak_idx[2]+1)));
+	vector<vector<float>> location_info = conv_2d_list_vector(buffer.substr (linebreak_idx[3]+1, (buffer_length-1)));
 
 }
 
@@ -76,7 +133,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54020);
+	serv_addr.sin_port = htons(54057);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
