@@ -47,11 +47,6 @@ int main() {
 		return -1;
 	}
 
-//	while(true){
-//		send(client_socket , echo, strlen(echo) , 0);
-//		valRead = read(client_socket, buffer, 1024);
-//		cout << buffer[0] << endl;
-//	}
 
 	while(true){
 		int bytesReceived = recv(client_socket, buffer, 4096, 0);
