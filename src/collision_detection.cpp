@@ -21,7 +21,7 @@ using namespace std;
 int main() {
 
 
-	char buffer[4096] = {0};
+	char buffer[6144] = {0};
 
 	//Create a socket
 	int client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,7 +33,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54003);
+	serv_addr.sin_port = htons(54000);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -48,7 +48,7 @@ int main() {
 
 
 	while(true){
-		int bytesReceived = recv(client_socket, buffer, 4096, 0);
+		int bytesReceived = recv(client_socket, buffer, 6144, 0);
 		if (bytesReceived == -1)
 		{
 			cerr << "Error in recv(). Quitting" << endl;
