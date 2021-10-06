@@ -22,7 +22,6 @@ int main() {
 
 
 	char buffer[4096] = {0};
-	char *echo = "Message Received";
 
 	//Create a socket
 	int client_socket = socket(AF_INET, SOCK_STREAM, 0);
