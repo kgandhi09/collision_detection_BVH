@@ -19,14 +19,13 @@ class BVH{
 public:
 	int obj_count;
 	vector<int> vertex_count;
-	int frames_count;
 	vector<vector<float>> cube_vertices;
 	vector<vector<float>> suzanne_vertices;
 	vector<float> cube_location_info;
 	vector<float> suzanne_location_info;
 	AABB_tree* tree;
 
-	BVH(int obj_count, vector<int> vertex_count, int frames_count, vector<vector<float>> cube_vertices, vector<vector<float>> suzanne_vertices, vector<float> cube_location_info, vector<float> suzanne_location_info);
+	BVH(int obj_count, vector<int> vertex_count, vector<vector<float>> cube_vertices, vector<vector<float>> suzanne_vertices, vector<float> cube_location_info, vector<float> suzanne_location_info);
 	void obj_world_vert();
 
 };
