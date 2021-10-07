@@ -14,7 +14,10 @@ BVH::BVH(int obj_count, vector<int> vertex_count, int frames_count, vector<vecto
 	BVH::frames_count = frames_count;
 	BVH::vertices_info = vertices_info;
 	BVH::frame_location_info = frame_location_info;
+	BVH::tree = new AABB_tree();
 }
+
+
 
 
 

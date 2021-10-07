@@ -16,7 +16,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <string>
-#include "include/AABB_tree.h"
 
 using namespace std;
 
@@ -173,13 +172,6 @@ int main() {
 	}
 	cout << "here" << endl;
 //	convert_jsonString_to_vector(buffer_val);
-	vector<float> root{1, 20, 30};
-	vector<float> left{0, 0, 0};
-	vector<float> right{1, 1, 1};
-	AABB_tree* testTree = new AABB_tree();
-	testTree->addRoot(root);
-	testTree->addChildren(testTree->root, left, right);
-
 
 
 	return 0;

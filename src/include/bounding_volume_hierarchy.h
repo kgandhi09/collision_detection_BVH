@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <vector>
+#include "AABB_tree.h"
 
 using namespace std;
 
@@ -21,8 +22,10 @@ public:
 	int frames_count;
 	vector<vector<float>> vertices_info;
 	vector<float> frame_location_info;
+	AABB_tree* tree;
 
 	BVH(int obj_count, vector<int> vertex_count, int frames_count, vector<vector<float>> vertices_info, vector<float> frame_location_info);
+
 };
 
 
