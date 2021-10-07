@@ -29,8 +29,9 @@ public:
 	BVH(int obj_count, vector<int> vertex_count, vector<vector<float>> cube_vertices, vector<vector<float>> suzanne_vertices, vector<float> cube_location_info, vector<float> suzanne_location_info);
 	void obj_world_vert();
 	vector<float> calc_min_xyz(vector<vector<float>> vec);
-	vector<float> calc_max_xvyz(vector<vector<float>> vec);
-	void create_BVH();
+	vector<float> calc_max_xyz(vector<vector<float>> vec);
+	vector<float> combine_min_max(vector<float> min, vector<float> max);
+	void construct_BVH();
 
 };
 

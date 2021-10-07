@@ -60,7 +60,7 @@ vector<float> BVH::calc_min_xyz(vector<vector<float>> vec){
 	return min;
 }
 
-vector<float> BVH::calc_max_xvyz(vector<vector<float>> vec){
+vector<float> BVH::calc_max_xyz(vector<vector<float>> vec){
 	int max_x = numeric_limits<int>::min();
 	int max_y = numeric_limits<int>::min();
 	int max_z = numeric_limits<int>::min();
@@ -89,7 +89,38 @@ vector<float> BVH::calc_max_xvyz(vector<vector<float>> vec){
 	return max;
 }
 
-void BVH::create_BVH(){
+vector<float> BVH::combine_min_max(vector<float> min, vector<float> max){
+	vector<float> combined;
+	for(long unsigned int i = 0; i < min.size(); i++){
+		combined.push_back(min[i]);
+	}
+	for(long unsigned int i = 0; i < max.size(); i++){
+		combined.push_back(max[i]);
+	}
+	return combined;
+}
+
+void BVH::construct_BVH(){
+	int depth_limit = 5;
+	vector<float> root_data {0, 0, 0, 0, 0, 0};
+	tree->addRoot(root_data);
+
+	//calculating min vertex for cube -> Left child
+	vector<float> cube_min = calc_min_xyz(BVH::cube_vertices);
+	vector<float> cube_max = calc_max_xyz(BVH::cube_vertices);
+	vector<float> root_left_data = combine_min_max(cube_min, cube_max);
+
+	//calculating min vertex for Suzanne -> Right child
+	vector<float> suzanne_min = calc_min_xyz(BVH::suzanne_vertices);
+	vector<float> suzanne_max = calc_max_xyz(BVH::suzanne_vertices);
+	vector<float> root_right_data = combine_min_max(suzanne_min, suzanne_max);
+
+	tree->addChildrenRoot(tree->root, root_left_data, root_right_data);
+
+	int depth = 0;
+	while(depth < depth_limit){
+		depth++;
+	}
 
 }
 
