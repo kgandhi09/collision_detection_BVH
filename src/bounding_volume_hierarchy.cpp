@@ -16,7 +16,7 @@ BVH::BVH(int obj_count, vector<int> vertex_count, vector<vector<float>> cube_ver
 	BVH::cube_location_info = cube_location_info;
 	BVH::suzanne_location_info = suzanne_location_info;
 	BVH::root_min_max_data = {-9, -9, -9, 9, 9, 9};     //min_xyz,max_xyz
-	BVH::depth = 0;
+	BVH::collision_detected = 0;
 	BVH::all_nodes_visited = 0;
 	BVH::tree = new AABB_tree();
 }
@@ -146,34 +146,42 @@ void BVH::split_AABB(vector<vector<float>> data, AABB_tree::octree_node* node){
 	//top_left AABB child for plane 1
 	vector<float> sub_AABB_1_data {x2, y2, ((z2-z1)/2), ((x1-x2)/2), ((y1-y2)/2), z1};
 	vector<vector<float>> sub_AABB_1_vertices = get_AABB_vertices(sub_AABB_1_data);
+	int sub_AABB_1_collision = detect_collision(sub_AABB_1_vertices);
 
 	//bottom_left AABB child for plane 1
 	vector<float> sub_AABB_2_data {x2, y2, z2, ((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_2_vertices = get_AABB_vertices(sub_AABB_2_data);
+	int sub_AABB_2_collision = detect_collision(sub_AABB_2_vertices);
 
 	//top right AABB  child for plane 1
 	vector<float> sub_AABB_3_data {((x1-x2)/2), y2, ((z1-z2)/2),  x1, ((y1-y2)/2), z1};
 	vector<vector<float>> sub_AABB_3_vertices = get_AABB_vertices(sub_AABB_3_data);
+	int sub_AABB_3_collision = detect_collision(sub_AABB_3_vertices);
 
 	//bottom right AABB child for plane 1
 	vector<float> sub_AABB_4_data {((x1-x2)/2), y2, z2, x1, ((y1-y2)/2), ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_4_vertices = get_AABB_vertices(sub_AABB_4_data);
+	int sub_AABB_4_collision = detect_collision(sub_AABB_4_vertices);
 
 	//top left AABB child for plane 2
 	vector<float> sub_AABB_5_data {x2, ((y1-y2)/2), ((z1-z2)/2), ((x1-x2)/2), y1, z1};
 	vector<vector<float>> sub_AABB_5_vertices = get_AABB_vertices(sub_AABB_5_data);
+	int sub_AABB_5_collision = detect_collision(sub_AABB_5_vertices);
 
 	//bottom left AABB  child for plane 2
 	vector<float> sub_AABB_6_data {x2, ((y1-y2)/2), z2, ((x1-x2)/2), y1, ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_6_vertices = get_AABB_vertices(sub_AABB_6_data);
+	int sub_AABB_6_collision = detect_collision(sub_AABB_6_vertices);
 
 	//top right AABB child for plane 2
 	vector<float> sub_AABB_7_data {((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2), x1, y1, z1};
 	vector<vector<float>> sub_AABB_7_vertices = get_AABB_vertices(sub_AABB_7_data);
+	int sub_AABB_7_collision = detect_collision(sub_AABB_7_vertices);
 
 	//bottom right AABB child for plane 2
 	vector<float> sub_AABB_8_data {((x1-x2)/2), ((y1-y2)/2), z2, x1, y1, ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_8_vertices = get_AABB_vertices(sub_AABB_8_data);
+	int sub_AABB_8_collision = detect_collision(sub_AABB_8_vertices);
 
 	node->one->data = sub_AABB_1_vertices;
 	node->two->data = sub_AABB_2_vertices;
@@ -183,6 +191,11 @@ void BVH::split_AABB(vector<vector<float>> data, AABB_tree::octree_node* node){
 	node->six->data = sub_AABB_6_vertices;
 	node->seven->data = sub_AABB_7_vertices;
 	node->eight->data = sub_AABB_8_vertices;
+
+	if(sub_AABB_1_collision || sub_AABB_2_collision || sub_AABB_3_collision || sub_AABB_4_collision
+			|| sub_AABB_5_collision || sub_AABB_6_collision || sub_AABB_7_collision || sub_AABB_8_collision){
+		BVH::collision_detected = 1;
+	}
 
 }
 
@@ -214,26 +227,62 @@ int BVH::to_expand(vector<vector<float>> vertices){
 	return expand;
 }
 
+int BVH::detect_collision(vector<vector<float>> vertices){
+	int collision_detected = 0;
+	int cube_detected = 0;
+	int suzanne_detected = 0;
+
+	vector<float> min_vertices = vertices[1];
+	vector<float> max_vertices = vertices[6];
+
+	for(long unsigned int i = 0; i< cube_vertices.size(); i++){
+		if((cube_vertices[i][0] > min_vertices[0] && cube_vertices[i][0] < max_vertices[0])
+			&& (cube_vertices[i][1] > min_vertices[1] && cube_vertices[i][1] < max_vertices[1])
+			&& (cube_vertices[i][2] > min_vertices[2] && cube_vertices[i][2] < max_vertices[2])){
+			cube_detected = 1;
+		}
+	}
+	for(long unsigned int i = 0; i< cube_vertices.size(); i++){
+		if((suzanne_vertices[i][0] > min_vertices[0] && suzanne_vertices[i][0] < max_vertices[0])
+			&& (suzanne_vertices[i][1] > min_vertices[1] && suzanne_vertices[i][1] < max_vertices[1])
+			&& (suzanne_vertices[i][2] > min_vertices[2] && suzanne_vertices[i][2] < max_vertices[2])){
+			suzanne_detected = 1;
+		}
+	}
+
+	if(cube_detected && suzanne_detected){
+		collision_detected = 1;
+	}
+
+	return collision_detected;
+}
+
 void BVH::construct_BVH(AABB_tree::octree_node* node){
-	int depth_limit = 5;
 	int expand = to_expand(node->data);
 	if(expand){
 		split_AABB(node->data, node);
-		if(BVH::depth < depth_limit){
-			BVH::depth += 1;
-			split_AABB(node->one->data, node->one);
-			split_AABB(node->two->data, node->two);
-			split_AABB(node->three->data, node->three);
-			split_AABB(node->four->data, node->four);
-			split_AABB(node->five->data, node->five);
-			split_AABB(node->six->data, node->six);
-			split_AABB(node->seven->data, node->seven);
-			split_AABB(node->eight->data, node->eight);
-			BVH::construct_BVH(node->one);
-		}
-
+		split_all_nodes(node);
 	}
+}
 
+void BVH::split_all_nodes(AABB_tree::octree_node* node){
+	int expand_one = to_expand(node->one->data);
+	int expand_two = to_expand(node->two->data);
+	int expand_three = to_expand(node->three->data);
+	int expand_four = to_expand(node->four->data);
+	int expand_five = to_expand(node->five->data);
+	int expand_six = to_expand(node->six->data);
+	int expand_seven = to_expand(node->seven->data);
+	int expand_eight = to_expand(node->eight->data);
+
+	if(expand_one){split_AABB(node->one->data, node->one);}
+	if(expand_two){split_AABB(node->two->data, node->two);}
+	if(expand_three){split_AABB(node->three->data, node->three);}
+	if(expand_four){split_AABB(node->four->data, node->four);}
+	if(expand_five){split_AABB(node->five->data, node->five);}
+	if(expand_six){split_AABB(node->six->data, node->six);}
+	if(expand_seven){split_AABB(node->seven->data, node->seven);}
+	if(expand_eight){split_AABB(node->eight->data, node->eight);}
 
 }
 
