@@ -7,6 +7,7 @@
 //============================================================================
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <math.h>
 #include <sys/types.h>
@@ -16,6 +17,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <string>
+#include <iterator>
 #include "include/bounding_volume_hierarchy.h"
 
 using namespace std;
@@ -172,7 +174,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54012);
+	serv_addr.sin_port = htons(54052);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -210,8 +212,24 @@ int main() {
 	split_vertices_per_obj(vertices_info, vertex_count);
 	split_locations_per_obj(location_info, frames_count);
 
-	BVH* testBVH = new BVH(obj_count, vertex_count, cube_vertices, suzanne_vertices, cube_locations[0], suzanne_locations[0]);
-	testBVH->obj_world_vert();
+	vector<int> collision_info;
+
+	for(int i = 0; i < frames_count; i++){
+		BVH* bvh = new BVH(obj_count, vertex_count, cube_vertices, suzanne_vertices, cube_locations[i], suzanne_locations[i]);
+		bvh->obj_world_vert();
+		bvh->construct_BVH_root();
+		bvh->construct_BVH(bvh->tree->root);
+		collision_info.push_back(bvh->collision_detected);
+	}
+
+	ofstream outFile;
+	outFile.open("./basic_collision.txt");
+	if(outFile.is_open()){
+		ostream_iterator<string> output_iterator(outFile, "\n");
+		for (const auto &e : collision_info) outFile << e;
+	}
+
+	outFile.close();
 
 	return 0;
 }
