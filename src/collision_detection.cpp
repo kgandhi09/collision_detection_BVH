@@ -41,6 +41,13 @@ void print_2d_vector(vector<vector<float>> vec){
 	}
 }
 
+void print_vector(vector<float> vec){
+	for(long unsigned int i = 0; i < vec.size(); i++){
+		cout << vec[i] << " ";
+	}
+	cout << endl;
+}
+
 vector<int> conv_string_list_vector_int(string val){
 	vector<int> vec;
 
@@ -165,7 +172,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54008);
+	serv_addr.sin_port = htons(54012);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -203,11 +210,8 @@ int main() {
 	split_vertices_per_obj(vertices_info, vertex_count);
 	split_locations_per_obj(location_info, frames_count);
 
-	print_2d_vector(cube_vertices);
-	cout << "-----------" << endl;
 	BVH* testBVH = new BVH(obj_count, vertex_count, cube_vertices, suzanne_vertices, cube_locations[0], suzanne_locations[0]);
 	testBVH->obj_world_vert();
-	print_2d_vector(testBVH->cube_vertices);
 
 	return 0;
 }
