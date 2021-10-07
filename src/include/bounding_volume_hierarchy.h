@@ -25,6 +25,7 @@ public:
 	AABB_tree* tree;
 
 	BVH(int obj_count, vector<int> vertex_count, int frames_count, vector<vector<float>> vertices_info, vector<float> frame_location_info);
+	void obj_world_vert(vector<float> frame_location_info, vector<float> vertices_info);
 
 };
 

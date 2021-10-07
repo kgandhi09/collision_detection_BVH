@@ -25,6 +25,12 @@ int frames_count;
 vector<vector<float>> vertices_info;
 vector<vector<float>> location_info;
 
+//individual vertices and location info for each object
+vector<vector<float>> cube_vertices;
+vector<vector<float>> suzanne_vertices;
+vector<vector<float>> cube_locations;
+vector<vector<float>> suzanne_locations;
+
 void print_2d_vector(vector<vector<float>> vec){
 	for(long unsigned int i = 0; i < vec.size(); i++){
 		for(long unsigned int j = 0; j < vec[i].size(); j++){
@@ -110,8 +116,6 @@ vector<vector<float>> conv_2d_list_vector(string val){
 }
 
 void convert_jsonString_to_vector(string buffer){
-	cout << buffer << endl;
-	cout << "----------" << endl;
 	int buffer_length = buffer.length();
 	vector<int> linebreak_idx;
 	for(int i = 0; i < buffer_length; i++){
@@ -123,6 +127,27 @@ void convert_jsonString_to_vector(string buffer){
 	vertices_info = conv_2d_list_vector(buffer.substr (linebreak_idx[2]+1, linebreak_idx[3]-(linebreak_idx[2]+1)));
 	location_info = conv_2d_list_vector(buffer.substr (linebreak_idx[3]+1, (buffer_length-1)));
 
+}
+
+void split_vertices_per_obj(vector<vector<float>> verices_info, vector<int> vertices_count){
+	int no_cube_vertices = vertices_count[0];
+	int no_suzanne_vertices = vertices_count[1];
+
+	for(int i = 0; i < no_cube_vertices; i++){
+		cube_vertices.push_back(vertices_info[i]);
+	}
+	for(int i = no_cube_vertices; i < (no_cube_vertices + no_suzanne_vertices); i++){
+		suzanne_vertices.push_back(vertices_info[i]);
+	}
+}
+
+void split_locations_per_obj(vector<vector<float>> locations_info, int frames_count){
+	for(int i = 0; i < frames_count; i++){
+		cube_locations.push_back(location_info[i]);
+	}
+	for(int i = frames_count; i < (2*frames_count); i++){
+		suzanne_locations.push_back(location_info[i]);
+	}
 }
 
 int main() {
@@ -139,7 +164,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54002);
+	serv_addr.sin_port = htons(54007);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -170,8 +195,13 @@ int main() {
         }
 
 	}
-	cout << "here" << endl;
-//	convert_jsonString_to_vector(buffer_val);
+
+	convert_jsonString_to_vector(buffer_val);
+
+	//splitting the vertices and locations info per object
+	split_vertices_per_obj(vertices_info, vertex_count);
+	split_locations_per_obj(location_info, frames_count);
+
 
 
 	return 0;
