@@ -100,30 +100,105 @@ vector<float> BVH::combine_min_max(vector<float> min, vector<float> max){
 	return combined;
 }
 
-void BVH::construct_BVH(){
-	int depth_limit = 5;
-	vector<float> root_data {0, 0, 0, 0, 0, 0};
-	tree->addRoot(root_data);
+vector<vector<float>> BVH::get_AABB_vertices(vector<float> data){
+	vector<vector<float>> AABB_vertices;
+	float x2 = data[0];
+	float y2 = data[1];
+	float z2 = data[2];
+	float x1 = data[3];
+	float y1 = data[4];
+	float z1 = data[5];
 
-	//calculating min vertex for cube -> Left child
-	vector<float> cube_min = calc_min_xyz(BVH::cube_vertices);
-	vector<float> cube_max = calc_max_xyz(BVH::cube_vertices);
-	vector<float> root_left_data = combine_min_max(cube_min, cube_max);
+	vector<float> AABB_plane_1_top_left {x2, y2, z1};
+	vector<float> AABB_plane_1_bottom_left {x2, y1, z2};
+	vector<float> AABB_plane_1_top_right {x1, y2, z1};
+	vector<float> AABB_plane_1_bottom_right {x1, y2, z2};
 
-	//calculating min vertex for Suzanne -> Right child
-	vector<float> suzanne_min = calc_min_xyz(BVH::suzanne_vertices);
-	vector<float> suzanne_max = calc_max_xyz(BVH::suzanne_vertices);
-	vector<float> root_right_data = combine_min_max(suzanne_min, suzanne_max);
+	vector<float> AABB_plane_2_top_left {x2, y1, z1};
+	vector<float> AABB_plane_2_bottom_left {x2, y1, z2};
+	vector<float> AABB_plane_2_top_right {x1, y1, z1};
+	vector<float> AABB_plane_2_bottom_right {x1, y1, z2};
 
-	tree->addChildrenRoot(tree->root, root_left_data, root_right_data);
+	AABB_vertices.push_back(AABB_plane_1_top_left);
+	AABB_vertices.push_back(AABB_plane_1_bottom_left);
+	AABB_vertices.push_back(AABB_plane_1_top_right);
+	AABB_vertices.push_back(AABB_plane_1_bottom_right);
 
-	int depth = 0;
-	while(depth < depth_limit){
-		depth++;
-	}
+	AABB_vertices.push_back(AABB_plane_2_top_left);
+	AABB_vertices.push_back(AABB_plane_2_bottom_left);
+	AABB_vertices.push_back(AABB_plane_2_top_right);
+	AABB_vertices.push_back(AABB_plane_2_bottom_right);
+
+	return AABB_vertices;
+}
+
+void BVH::split_AABB(vector<vector<float>> data){
+	float x2 = data[1][0];
+	float y2 = data[1][1];
+	float z2 = data[1][2];
+	float x1 = data[6][0];
+	float y1 = data[6][1];
+	float z1 = data[6][2];
+
+	//top_left AABB child for plane 1
+	vector<float> sub_AABB_1_data {x2, y2, ((z2-z1)/2), ((x1-x2)/2), ((y1-y2)/2), z1};
+	vector<vector<float>> sub_AABB_1_vertices = get_AABB_vertices(sub_AABB_1_data);
+
+	//bottom_left AABB child for plane 1
+	vector<float> sub_AABB_2_data {x2, y2, z2, ((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2)};
+	vector<vector<float>> sub_AABB_2_vertices = get_AABB_vertices(sub_AABB_2_data);
+
+	//top right AABB  child for plane 1
+	vector<float> sub_AABB_3_data {((x1-x2)/2), y2, ((z1-z2)/2),  x1, ((y1-y2)/2), z1};
+	vector<vector<float>> sub_AABB_3_vertices = get_AABB_vertices(sub_AABB_3_data);
+
+	//bottom right AABB child for plane 1
+	vector<float> sub_AABB_4_data {((x1-x2)/2), y2, z2, x1, ((y1-y2)/2), ((z1-z2)/2)};
+	vector<vector<float>> sub_AABB_4_vertices = get_AABB_vertices(sub_AABB_4_data);
+
+	//top left AABB child for plane 2
+	vector<float> sub_AABB_5_data {x2, ((y1-y2)/2), ((z1-z2)/2), ((x1-x2)/2), y1, z1};
+	vector<vector<float>> sub_AABB_5_vertices = get_AABB_vertices(sub_AABB_5_data);
+
+	//bottom left AABB  child for plane 2
+	vector<float> sub_AABB_6_data {x2, ((y1-y2)/2), z2, ((x1-x2)/2), y1, ((z1-z2)/2)};
+	vector<vector<float>> sub_AABB_6_vertices = get_AABB_vertices(sub_AABB_6_data);
+
+	//top right AABB child for plane 2
+	vector<float> sub_AABB_7_data {((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2), x1, y1, z1};
+	vector<vector<float>> sub_AABB_7_vertices = get_AABB_vertices(sub_AABB_7_data);
+
+	//bottom right AABB child for plane 2
+	vector<float> sub_AABB_8_data {((x1-x2)/2), ((y1-y2)/2), z2, x1, y1, ((z1-z2)/2)};
+	vector<vector<float>> sub_AABB_8_vertices = get_AABB_vertices(sub_AABB_8_data);
 
 }
 
+void BVH::construct_BVH_root(){
+	vector<vector<float>> root_data {{0, 0, 0, 0, 0, 0}};
+	tree->addRoot(root_data);
+
+	//calculating min vertex for cube -> Left child
+	vector<float> left_min = calc_min_xyz(BVH::cube_vertices);
+	vector<float> left_max = calc_max_xyz(BVH::cube_vertices);
+	vector<float> left_combined = combine_min_max(left_min, left_max);
+	vector<vector<float>> root_left_data = get_AABB_vertices(left_combined);
+
+	//calculating min vertex for Suzanne -> Right child
+	vector<float> right_min = calc_min_xyz(BVH::suzanne_vertices);
+	vector<float> right_max = calc_max_xyz(BVH::suzanne_vertices);
+	vector<float> right_combined = combine_min_max(right_min, right_max);
+	vector<vector<float>> root_right_data = get_AABB_vertices(right_combined);
+
+	tree->addChildrenRoot(tree->root, root_left_data, root_right_data);
+
+}
+
+void BVH::construct_BVH_octree(){
+	int depth_limit = 5; //leaf condition
+
+
+}
 
 
 

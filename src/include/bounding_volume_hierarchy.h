@@ -31,7 +31,10 @@ public:
 	vector<float> calc_min_xyz(vector<vector<float>> vec);
 	vector<float> calc_max_xyz(vector<vector<float>> vec);
 	vector<float> combine_min_max(vector<float> min, vector<float> max);
-	void construct_BVH();
+	vector<vector<float>> get_AABB_vertices(vector<float> min_max_data);
+	void split_AABB(vector<vector<float>> data);
+	void construct_BVH_root();
+	void construct_BVH_octree();
 
 };
 

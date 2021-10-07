@@ -17,7 +17,7 @@ using namespace std;
 class AABB_tree{
 public:
 	struct octree_node{
-		vector<float> data; //include the information of minx, miny, minz, maxx, maxy, maxz
+		vector<vector<float>> data; //include the information of minx, miny, minz, maxx, maxy, maxz
 		octree_node* one;
 		octree_node* two;
 		octree_node* three;
@@ -28,7 +28,7 @@ public:
 		octree_node* eight;
 	};
 	struct node{
-		vector<float> data; //include the information of minx, miny, minz, maxx, maxy, maxz
+		vector<vector<float>> data; //include the information of minx, miny, minz, maxx, maxy, maxz
 		octree_node* left;
 		octree_node* right;
 	};
@@ -36,23 +36,19 @@ public:
 	node* root;
 
 	AABB_tree();
-	node* createLeafRoot(vector<float> data);
-	octree_node* createLeaf(vector<float> data);
-	void addRoot(vector<float> data);
-	void addChildrenRoot(node* node, vector<float> data_child_left, vector<float> data_child_right);
+	node* createLeafRoot(vector<vector<float>> data);
+	octree_node* createLeaf(vector<vector<float>> data);
+	void addRoot(vector<vector<float>> data);
+	void addChildrenRoot(node* node, vector<vector<float>> data_child_left, vector<vector<float>> data_child_right);
 	void addChildren(octree_node* node,
-					vector<float> data_child_1,
-					vector<float> data_child_2,
-					vector<float> data_child_3,
-					vector<float> data_child_4,
-					vector<float> data_child_5,
-					vector<float> data_child_6,
-					vector<float> data_child_7,
-					vector<float> data_child_8);
-	void delNode(node* node);
-	void printNode(node* node);
-	void printVector(vector<float> vec);
-
+			vector<vector<float>> data_child_1,
+			vector<vector<float>> data_child_2,
+			vector<vector<float>> data_child_3,
+			vector<vector<float>> data_child_4,
+			vector<vector<float>> data_child_5,
+			vector<vector<float>> data_child_6,
+			vector<vector<float>> data_child_7,
+			vector<vector<float>> data_child_8);
 };
 
 
