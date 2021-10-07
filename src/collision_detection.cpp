@@ -16,8 +16,15 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <string>
+#include "include/AABB_tree.h"
 
 using namespace std;
+
+int obj_count;
+vector<int> vertex_count;
+int frames_count;
+vector<vector<float>> vertices_info;
+vector<vector<float>> location_info;
 
 void print_2d_vector(vector<vector<float>> vec){
 	for(long unsigned int i = 0; i < vec.size(); i++){
@@ -111,11 +118,11 @@ void convert_jsonString_to_vector(string buffer){
 	for(int i = 0; i < buffer_length; i++){
 		if(buffer[i] == '\n'){linebreak_idx.push_back(i);}
 	}
-	int obj_count = stoi(buffer.substr (0, linebreak_idx[0]));
-	vector<int> vertex_count = conv_string_list_vector_int(buffer.substr (linebreak_idx[0]+1, linebreak_idx[1]-(linebreak_idx[0]+1)));
-	int frames_count = stoi(buffer.substr (linebreak_idx[1]+1, linebreak_idx[2]-(linebreak_idx[1]+1)));
-	vector<vector<float>> vertices_info = conv_2d_list_vector(buffer.substr (linebreak_idx[2]+1, linebreak_idx[3]-(linebreak_idx[2]+1)));
-	vector<vector<float>> location_info = conv_2d_list_vector(buffer.substr (linebreak_idx[3]+1, (buffer_length-1)));
+	obj_count = stoi(buffer.substr (0, linebreak_idx[0]));
+	vertex_count = conv_string_list_vector_int(buffer.substr (linebreak_idx[0]+1, linebreak_idx[1]-(linebreak_idx[0]+1)));
+	frames_count = stoi(buffer.substr (linebreak_idx[1]+1, linebreak_idx[2]-(linebreak_idx[1]+1)));
+	vertices_info = conv_2d_list_vector(buffer.substr (linebreak_idx[2]+1, linebreak_idx[3]-(linebreak_idx[2]+1)));
+	location_info = conv_2d_list_vector(buffer.substr (linebreak_idx[3]+1, (buffer_length-1)));
 
 }
 
@@ -133,7 +140,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54057);
+	serv_addr.sin_port = htons(54002);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -164,7 +171,15 @@ int main() {
         }
 
 	}
-	convert_jsonString_to_vector(buffer_val);
+	cout << "here" << endl;
+//	convert_jsonString_to_vector(buffer_val);
+	vector<float> root{1, 20, 30};
+	vector<float> left{0, 0, 0};
+	vector<float> right{1, 1, 1};
+	AABB_tree* testTree = new AABB_tree();
+	testTree->addRoot(root);
+	testTree->addChildren(testTree->root, left, right);
+
 
 
 	return 0;
