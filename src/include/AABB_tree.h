@@ -27,19 +27,13 @@ public:
 		octree_node* seven;
 		octree_node* eight;
 	};
-	struct node{
-		vector<vector<float>> data; //include the information of minx, miny, minz, maxx, maxy, maxz
-		octree_node* left;
-		octree_node* right;
-	};
 
-	node* root;
+
+	octree_node* root;
 
 	AABB_tree();
-	node* createLeafRoot(vector<vector<float>> data);
 	octree_node* createLeaf(vector<vector<float>> data);
 	void addRoot(vector<vector<float>> data);
-	void addChildrenRoot(node* node, vector<vector<float>> data_child_left, vector<vector<float>> data_child_right);
 	void addChildren(octree_node* node,
 			vector<vector<float>> data_child_1,
 			vector<vector<float>> data_child_2,

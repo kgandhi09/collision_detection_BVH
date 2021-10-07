@@ -11,14 +11,6 @@ AABB_tree::AABB_tree(){
 	root = NULL;
 }
 
-AABB_tree::node* AABB_tree::createLeafRoot(vector<vector<float>> data){
-	node* currRoot = new node;
-	currRoot->data = data;
-	currRoot->left = NULL;
-	currRoot->right = NULL;
-
-	return currRoot;
-}
 
 AABB_tree::octree_node* AABB_tree::createLeaf(vector<vector<float>> data){
 	octree_node* currRoot = new octree_node;
@@ -36,15 +28,9 @@ AABB_tree::octree_node* AABB_tree::createLeaf(vector<vector<float>> data){
 }
 
 void AABB_tree::addRoot(vector<vector<float>> data_root){
-	root = createLeafRoot(data_root);
+	root = createLeaf(data_root);
 }
 
-void AABB_tree::addChildrenRoot(node* node, vector<vector<float>> data_child_left, vector<vector<float>> data_child_right){
-	if(node != NULL){
-		node->left = createLeaf(data_child_left);
-		node->right = createLeaf(data_child_right);
-	}
-}
 
 void AABB_tree::addChildren(octree_node* node,
 		vector<vector<float>> data_child_1,

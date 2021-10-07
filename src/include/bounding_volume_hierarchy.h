@@ -24,6 +24,9 @@ public:
 	vector<vector<float>> suzanne_vertices;
 	vector<float> cube_location_info;
 	vector<float> suzanne_location_info;
+	vector<float> root_min_max_data;
+	int depth;
+	int all_nodes_visited;
 	AABB_tree* tree;
 
 	BVH(int obj_count, vector<int> vertex_count, vector<vector<float>> cube_vertices, vector<vector<float>> suzanne_vertices, vector<float> cube_location_info, vector<float> suzanne_location_info);
@@ -32,9 +35,10 @@ public:
 	vector<float> calc_max_xyz(vector<vector<float>> vec);
 	vector<float> combine_min_max(vector<float> min, vector<float> max);
 	vector<vector<float>> get_AABB_vertices(vector<float> min_max_data);
-	void split_AABB(vector<vector<float>> data);
+	void split_AABB(vector<vector<float>> data, AABB_tree::octree_node* node);
 	void construct_BVH_root();
-	void construct_BVH_octree();
+	int to_expand(vector<vector<float>> vertices);
+	void construct_BVH(AABB_tree::octree_node*);
 
 };
 
