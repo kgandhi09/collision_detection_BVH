@@ -203,6 +203,5 @@ int main() {
 	split_locations_per_obj(location_info, frames_count);
 
 
-
 	return 0;
 }
