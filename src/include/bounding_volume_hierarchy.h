@@ -38,7 +38,7 @@ public:
 	void split_AABB(vector<vector<float>> data, AABB_tree::octree_node* node);
 	void construct_BVH_root();
 	int to_expand(vector<vector<float>> vertices);
-	int detect_collision(vector<vector<float>> vertices);
+	int collision_detection(vector<vector<float>> vertices);
 	void split_all_nodes(AABB_tree::octree_node* node);
 	void construct_BVH(AABB_tree::octree_node*);
 

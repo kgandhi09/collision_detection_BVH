@@ -18,6 +18,7 @@
 #include <string.h>
 #include <string>
 #include <iterator>
+#include <chrono>
 #include "include/bounding_volume_hierarchy.h"
 
 using namespace std;
@@ -174,7 +175,7 @@ int main() {
 	//Bind the IP address and port to a socket
 	struct sockaddr_in serv_addr;
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(54071);
+	serv_addr.sin_port = htons(54075);
 
 	//Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0){
@@ -200,7 +201,7 @@ int main() {
 		}
         if (bytesReceived == 0)
         {
-            cout << "Client disconnected " << endl;
+            cout << "" << endl;
             break;
         }
 
@@ -218,9 +219,15 @@ int main() {
 		BVH* bvh = new BVH(obj_count, vertex_count, cube_vertices, suzanne_vertices, cube_locations[i], suzanne_locations[i]);
 		bvh->obj_world_vert();
 		bvh->construct_BVH_root();
+		auto start = chrono::high_resolution_clock::now();
 		bvh->construct_BVH(bvh->tree->root);
+		auto stop = chrono::high_resolution_clock::now();
 		collision_info.push_back(bvh->collision_detected);
+		chrono::duration<double> duration = chrono::duration_cast<chrono::duration<double>>(stop-start);
+		cout<< "Time taken to generate the tree (in s): " << duration.count() << "\n";
+
 	}
+	cout << "Done collision detection" << endl;
 
 	ofstream outFile;
 	outFile.open("./basic_collision.txt");

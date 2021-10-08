@@ -146,42 +146,42 @@ void BVH::split_AABB(vector<vector<float>> data, AABB_tree::octree_node* node){
 	//top_left AABB child for plane 1
 	vector<float> sub_AABB_1_data {x2, y2, ((z2-z1)/2), ((x1-x2)/2), ((y1-y2)/2), z1};
 	vector<vector<float>> sub_AABB_1_vertices = get_AABB_vertices(sub_AABB_1_data);
-	int sub_AABB_1_collision = detect_collision(sub_AABB_1_vertices);
+	int sub_AABB_1_collision = collision_detection(sub_AABB_1_vertices);
 
 	//bottom_left AABB child for plane 1
 	vector<float> sub_AABB_2_data {x2, y2, z2, ((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_2_vertices = get_AABB_vertices(sub_AABB_2_data);
-	int sub_AABB_2_collision = detect_collision(sub_AABB_2_vertices);
+	int sub_AABB_2_collision = collision_detection(sub_AABB_2_vertices);
 
 	//top right AABB  child for plane 1
 	vector<float> sub_AABB_3_data {((x1-x2)/2), y2, ((z1-z2)/2),  x1, ((y1-y2)/2), z1};
 	vector<vector<float>> sub_AABB_3_vertices = get_AABB_vertices(sub_AABB_3_data);
-	int sub_AABB_3_collision = detect_collision(sub_AABB_3_vertices);
+	int sub_AABB_3_collision = collision_detection(sub_AABB_3_vertices);
 
 	//bottom right AABB child for plane 1
 	vector<float> sub_AABB_4_data {((x1-x2)/2), y2, z2, x1, ((y1-y2)/2), ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_4_vertices = get_AABB_vertices(sub_AABB_4_data);
-	int sub_AABB_4_collision = detect_collision(sub_AABB_4_vertices);
+	int sub_AABB_4_collision = collision_detection(sub_AABB_4_vertices);
 
 	//top left AABB child for plane 2
 	vector<float> sub_AABB_5_data {x2, ((y1-y2)/2), ((z1-z2)/2), ((x1-x2)/2), y1, z1};
 	vector<vector<float>> sub_AABB_5_vertices = get_AABB_vertices(sub_AABB_5_data);
-	int sub_AABB_5_collision = detect_collision(sub_AABB_5_vertices);
+	int sub_AABB_5_collision = collision_detection(sub_AABB_5_vertices);
 
 	//bottom left AABB  child for plane 2
 	vector<float> sub_AABB_6_data {x2, ((y1-y2)/2), z2, ((x1-x2)/2), y1, ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_6_vertices = get_AABB_vertices(sub_AABB_6_data);
-	int sub_AABB_6_collision = detect_collision(sub_AABB_6_vertices);
+	int sub_AABB_6_collision = collision_detection(sub_AABB_6_vertices);
 
 	//top right AABB child for plane 2
 	vector<float> sub_AABB_7_data {((x1-x2)/2), ((y1-y2)/2), ((z1-z2)/2), x1, y1, z1};
 	vector<vector<float>> sub_AABB_7_vertices = get_AABB_vertices(sub_AABB_7_data);
-	int sub_AABB_7_collision = detect_collision(sub_AABB_7_vertices);
+	int sub_AABB_7_collision = collision_detection(sub_AABB_7_vertices);
 
 	//bottom right AABB child for plane 2
 	vector<float> sub_AABB_8_data {((x1-x2)/2), ((y1-y2)/2), z2, x1, y1, ((z1-z2)/2)};
 	vector<vector<float>> sub_AABB_8_vertices = get_AABB_vertices(sub_AABB_8_data);
-	int sub_AABB_8_collision = detect_collision(sub_AABB_8_vertices);
+	int sub_AABB_8_collision = collision_detection(sub_AABB_8_vertices);
 
 	tree->addChildren(node, sub_AABB_1_vertices, sub_AABB_2_vertices, sub_AABB_3_vertices, sub_AABB_4_vertices, sub_AABB_5_vertices, sub_AABB_6_vertices, sub_AABB_7_vertices, sub_AABB_8_vertices);
 
@@ -220,7 +220,7 @@ int BVH::to_expand(vector<vector<float>> vertices){
 	return expand;
 }
 
-int BVH::detect_collision(vector<vector<float>> vertices){
+int BVH::collision_detection(vector<vector<float>> vertices){
 	int collision_detected = 0;
 	int cube_detected = 0;
 	int suzanne_detected = 0;
@@ -243,7 +243,7 @@ int BVH::detect_collision(vector<vector<float>> vertices){
 		}
 	}
 
-	if(suzanne_location_info[0] < -2.6 && suzanne_location_info[0] > -7.32){
+	if(cube_detected && suzanne_detected){
 		collision_detected = 1;
 	}
 
